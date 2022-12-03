@@ -2,7 +2,7 @@
 
 from absl import app, flags
 
-from elfcalories import ElfCalories
+from lib.elfcalories import ElfCalories
 import sys
 
 FLAGS = flags.FLAGS

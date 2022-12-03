@@ -4,7 +4,7 @@ import apache_beam as beam
 import apache_beam.io.fileio as fileio
 from absl import app, flags
 from apache_beam.options.pipeline_options import PipelineOptions
-import elfcalories.beamlib as eb
+import lib.elfcalories.beamlib as eb
 FLAGS = flags.FLAGS
 
 default_input = '2022/1/data/test_data.txt'

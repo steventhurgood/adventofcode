@@ -17,9 +17,10 @@ class Elf:
 
 
 class ElfCalories:
-    elves: List[Elf] = []
+    elves: List[Elf]
 
     def __init__(self, input_data: str):
+        self.elves = []
         current_elf: Optional[Elf] = None
         for line in input_data.strip().split('\n'):
             if current_elf is None:

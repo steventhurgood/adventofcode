@@ -1,13 +1,14 @@
-import os
-import unittest
-
-import apache_beam as beam
-from apache_beam.testing.test_pipeline import TestPipeline
-
-from apache_beam.testing.util import assert_that
+import lib.elfcalories.beamlib as eb
 from apache_beam.testing.util import equal_to
+from apache_beam.testing.util import assert_that
+from apache_beam.testing.test_pipeline import TestPipeline
+import apache_beam as beam
+import unittest
+import os
+import sys
 
-import elfcalories.beamlib as eb
+sys.path.insert(0, os.path.dirname(__file__))
+
 
 test_data_filename = os.path.join(
     os.path.dirname(__file__), 'data/test_data.txt')
