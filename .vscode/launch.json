@@ -14,6 +14,9 @@
             "env": {
                 "PYTHONPATH": "${workspaceRoot}"
             },
+            "args": [
+                "--alsologtostderr"
+            ],
         }
     ]
 }
