@@ -22,7 +22,7 @@ class RecordProcessorFn(beam.DoFn):
 
 
 @beam.ptransform_fn
-def LargestElves(pcoll, n: int):
+def LargestElves(pcoll: beam.PCollection, n: int) -> beam.PCollection:
     return (
         pcoll
         | 'Read Files' >> beam.ParDo(RecordSplitterFn())

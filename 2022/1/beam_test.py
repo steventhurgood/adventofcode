@@ -22,16 +22,16 @@ class TestElfCaloriesMax(unittest.TestCase):
 
     def test_elfcalories_one(self):
         with TestPipeline() as p:
-            input: beam.PCollection = p | beam.Create(
+            input = p | beam.Create(
                 [bytes(self.testdata, 'utf-8')])
 
-            output: beam.PCollection = input | 'Assert' >> eb.LargestElves(
+            output = input | 'Assert' >> eb.LargestElves(
                 1)
             assert_that(output, equal_to([24000]))
 
     def test_elfcalories_three(self):
         with TestPipeline() as p:
-            input: beam.PCollection = p | beam.Create(
+            input = p | beam.Create(
                 [bytes(self.testdata, 'utf-8')])
 
             output: beam.PCollection = input | 'Assert Three' >> eb.LargestElves(
