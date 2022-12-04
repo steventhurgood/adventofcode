@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from absl import app
 import os
 
-data_file = os.path.join(os.path.dirname(__file__), "data/test_data.txt")
+data_file = os.path.join(os.path.dirname(__file__), "data/data.txt")
 
 
 class Component:
@@ -17,9 +17,11 @@ class Component:
 
 class Circuit:
     wires: Dict[str, Component]
+    wire_cache: Dict[str, int]
 
     def __init__(self):
         self.wires = {}
+        self.wire_cache = {}
 
     def assemble(self, instructions: Iterator[str]):
         for line in instructions:
@@ -78,6 +80,19 @@ class Circuit:
 
             raise Exception(f'Error parsing line: {line}')
 
+    def evaluate(self, wire: str):
+        if wire in self.wire_cache:
+            return self.wire_cache[wire]
+
+        if wire.isnumeric():
+            result = int(wire)
+        else:
+            component: Component = self.wires[wire]
+            result = component.evaluate()
+
+        self.wire_cache[wire] = result
+        return result
+
 
 class Input(Component):
     circuit: Circuit
@@ -88,11 +103,7 @@ class Input(Component):
         self.wire = wire
 
     def evaluate(self) -> int:
-        if self.wire.isnumeric():
-            return int(self.wire)
-
-        source = self.circuit.wires[self.wire]
-        return source.evaluate()
+        return self.circuit.evaluate(self.wire)
 
 
 class BinaryComponent(Component):
@@ -108,32 +119,18 @@ class BinaryComponent(Component):
 
 class And(BinaryComponent):
     def evaluate(self) -> int:
-        left: Component
-        if self.left_wire.isnumeric():
-            left = Input(self, self.left_wire)
-        else:
-            left = self.circuit.wires[self.left_wire]
-        right: Component
-        if self.right_wire.isnumeric():
-            right = Input(self, self.right_wire)
-        else:
-            right = self.circuit.wires[self.right_wire]
-        return left.evaluate() & right.evaluate()
+        left: int = self.circuit.evaluate(self.left_wire)
+        right: int = self.circuit.evaluate(self.right_wire)
+
+        return left & right
 
 
 class Or(BinaryComponent):
     def evaluate(self) -> int:
-        left: Component
-        if self.left_wire.isnumeric():
-            left = Input(self, self.left_wire)
-        else:
-            left = self.circuit.wires[self.left_wire]
-        right: Component
-        if self.right_wire.isnumeric():
-            right = Input(self, self.right_wire)
-        else:
-            right = self.circuit.wires[self.right_wire]
-        return left.evaluate() | right.evaluate()
+        left: int = self.circuit.evaluate(self.left_wire)
+        right: int = self.circuit.evaluate(self.right_wire)
+
+        return left | right
 
 
 class Not(Component):
@@ -145,12 +142,8 @@ class Not(Component):
         self.circuit = circuit
 
     def evaluate(self) -> int:
-        source: Component
-        if self.wire.isnumeric():
-            source = Input(self, self.wire)
-        else:
-            source = self.circuit.wires[self.wire]
-        return 0xFFFF - source.evaluate()
+        result = self.circuit.evaluate(self.wire)
+        return 0xFFFF - result
 
 
 class Shifter(Component):
@@ -166,27 +159,19 @@ class Shifter(Component):
 
 class LeftShift(Shifter):
     def evaluate(self) -> int:
-        source: Component
-        if self.wire.isnumeric():
-            source = Input(self, self.wire)
-        else:
-            source = self.circuit.wires[self.wire]
-        value = (source.evaluate() << self.shift) & 0xFFFF
-        if value < 0:
-            value = value + 0xFFFF
+        number = self.circuit.evaluate(self.wire)
+        value = (number << self.shift) & 0xFFFF
+
         return value
 
 
 class RightShift(Shifter):
     def evaluate(self) -> int:
-        source: Component
-        if self.wire.isnumeric():
-            source = Input(self, self.wire)
-        else:
-            source = self.circuit.wires[self.wire]
-        value = source.evaluate() >> self.shift
+        number = self.circuit.evaluate(self.wire)
+        value = (number >> self.shift) & 0xFFFF
         if value < 0:
             value = value + 0xFFFF
+
         return value
 
 
@@ -195,9 +180,15 @@ def main(argv):
 
     with open(data_file) as f:
         c.assemble(f)
-        for letter in 'defgh':
-            output = c.wires[letter].evaluate()
-            print(output)
+        print(len(c.wires))
+        output = c.evaluate('a')
+        print(output)
+
+        c.wire_cache = {}
+        c.wires['b'] = Input(c, str(output))
+
+        output = c.evaluate('a')
+        print(output)
 
 
 if __name__ == '__main__':
