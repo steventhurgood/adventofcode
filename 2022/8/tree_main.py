@@ -16,6 +16,9 @@ def main(argv):
         visible = trees.count_visible()
         print(f'{visible} trees are visible')
 
+        best_score, x, y = trees.best_scenic_score()
+        print(f'Best score {best_score} found at ({x}, {y})')
+
 
 if __name__ == '__main__':
     app.run(main)

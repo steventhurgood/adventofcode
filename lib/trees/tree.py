@@ -1,6 +1,6 @@
 
 import dataclasses
-from typing import List, Sequence
+from typing import List, Sequence, Tuple, TextIO
 
 from absl import logging
 
@@ -11,7 +11,7 @@ class Trees:
     num_rows: int = 0
     num_cols: int = 0
 
-    def process(self, input: Sequence[str]):
+    def process(self, input: TextIO):
         for line in input:
             self.trees.append(list(map(int, line.strip())))
 
@@ -19,8 +19,10 @@ class Trees:
         if self.num_rows > 0:
             self.num_cols = len(self.trees[0])
 
-    def best_scenic_score(self) -> int:
+    def best_scenic_score(self) -> Tuple[int, int, int]:
         best_score = 0
+        best_x = 0
+        best_y = 0
 
         # all edge trees have a best scenic score of 0
         for y in range(1, self.num_rows-1):
@@ -30,41 +32,55 @@ class Trees:
                     logging.info(
                         f'New best score found {score} > {best_score} at [{x}, {y}]')
                     best_score = score
-        return best_score
+                    best_x = x
+                    best_y = y
+        return best_score, best_x, best_y
 
     def scenic_score(self, start_x: int, start_y: int) -> int:
 
+        if (start_x == 0
+            or start_x == len(self.trees[0])-1
+            or start_y == 0
+            or start_y == len(self.trees)-1
+            ):
+            return 0
+        # stop at the first tree that is >= the tree under consideration
+        # shorter trees further away are not visible
         # look left
-        current_highest_tree = 0
-        left_distance = 0
         for x in range(start_x-1, -1, -1):
-            if self.trees[start_y][x] > current_highest_tree:
-                left_distance = start_x - x
-                current_highest_tree = self.trees[start_y][x]
+            if self.trees[start_y][x] >= self.trees[start_y][start_x]:
+                #    left_distance = start_x - x
+                break
+            # if self.trees[start_y][x] >= current_highest_tree:
+        left_distance = start_x - x
+        #    current_highest_tree = self.trees[start_y][x]
 
         # look right
-        current_highest_tree = 0
-        right_distance = 0
         for x in range(start_x+1, self.num_cols):
-            if self.trees[start_y][x] > current_highest_tree:
-                right_distance = x - start_x
-                current_highest_tree = self.trees[start_y][x]
+            if self.trees[start_y][x] >= self.trees[start_y][start_x]:
+                # right_distance = x - start_x
+                break
+            # if self.trees[start_y][x] >= current_highest_tree:
+        right_distance = x - start_x
+        #        current_highest_tree = self.trees[start_y][x]
 
         # look up
-        current_highest_tree = 0
-        up_distance = 0
         for y in range(start_y-1, -1, -1):
-            if self.trees[y][start_x] > current_highest_tree:
-                up_distance = start_y - y
-                current_highest_tree = self.trees[y][start_x]
+            if self.trees[y][start_x] >= self.trees[start_y][start_x]:
+               # up_distance = start_y - y
+                break
+            # if self.trees[y][start_x] >= current_highest_tree:
+        up_distance = start_y - y
+        #        current_highest_tree = self.trees[y][start_x]
 
         # look down
-        current_highest_tree = 0
-        down_distance = 0
         for y in range(start_y+1, self.num_rows):
-            if self.trees[y][start_x] > current_highest_tree:
-                down_distance = y - start_y
-                current_highest_tree = self.trees[y][start_x]
+            if self.trees[y][start_x] >= self.trees[start_y][start_x]:
+                # down_distance = y - start_y
+                break
+            # if self.trees[y][start_x] >= current_highest_tree:
+        down_distance = y - start_y
+        #        current_highest_tree = self.trees[y][start_x]
         return left_distance * right_distance * up_distance * down_distance
 
     def count_visible(self) -> int:
