@@ -47,14 +47,13 @@ class ComparablePairCompiler(CompareVisitor):
         divider_b_cmp = Comparable.build_comparable(divider_b)
 
         comparables = self.flatten_pairs()
-        # comparables.append(divider_a_cmp)
-        # comparables.append(divider_b_cmp)
+        heapq.heapify(comparables)
 
-        comparables.append(divider_a_cmp)
-        comparables.append(divider_b_cmp)
-        comparables.sort()
+        heapq.heappush(comparables, divider_a_cmp)
+        heapq.heappush(comparables, divider_b_cmp)
 
-        self.comparables = comparables
+        self.comparables = [heapq.heappop(comparables)
+                            for i in range(len(comparables))]
 
         divider_a_index = self.comparables.index(divider_a_cmp) + 1
         divider_b_index = self.comparables.index(divider_b_cmp) + 1

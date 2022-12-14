@@ -11,5 +11,7 @@
     "python.testing.autoTestDiscoverOnSaveEnabled": true,
     "python.analysis.typeCheckingMode": "basic",
     "python.linting.enabled": true,
-    "python.linting.pylintArgs": []
+    "python.linting.pylintArgs": [],
+    "python.linting.pylintEnabled": false,
+    "python.linting.flake8Enabled": true
 }

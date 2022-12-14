@@ -143,3 +143,33 @@ class TestCompare(unittest.TestCase):
         for i, got in enumerate(compiled_pairs):
             want = all_pairs[i]
             self.assertEqual(want, str(got))
+
+    def test_consistent_sort(self):
+        all_pairs: List[str] = []
+        with open(prod_filename) as f:
+            for line in f:
+                line = line.strip()
+                if line == '':
+                    continue
+                all_pairs.append(line)
+
+        for first in all_pairs:
+            for second in all_pairs:
+
+                if first == second:
+                    self.assertFalse(
+                        first > second, f'{first} == {second}, and cannot be greater')
+                    self.assertFalse(
+                        first < second, f'{first} == {second} and cannot be less')
+
+                if first < second:
+                    self.assertNotEqual(
+                        first, second, f'{first} < {second} and cannot be equal')
+                    self.assertFalse(
+                        first > second, f'{first} < {second} and cannot be greater')
+
+                if first > second:
+                    self.assertNotEqual(
+                        first, second, f'{first} > {second} and cannot be equal')
+                    self.assertFalse(
+                        first < second, f'{first} > {second} and cannot be less')
