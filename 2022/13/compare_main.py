@@ -37,8 +37,8 @@ def compare(input, verbose):
         for comparable in compiler.comparables:
             click.echo(comparable)
 
-
-    click.echo(f'The decoder key is {decoder_key} ([{compiler.key_a_index}, {compiler.key_b_index}]')
+    click.echo(
+        f'The decoder key is {decoder_key} ([{compiler.key_a_index}, {compiler.key_b_index}]')
 
 
 if __name__ == '__main__':

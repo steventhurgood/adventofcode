@@ -5,6 +5,7 @@ from functools import total_ordering
 from typing import Any, List, Tuple
 
 import antlr4
+import heapq
 
 from lib.compare.grammar.CompareLexer import CompareLexer
 from lib.compare.grammar.CompareParser import CompareParser
@@ -46,14 +47,17 @@ class ComparablePairCompiler(CompareVisitor):
         divider_b_cmp = Comparable.build_comparable(divider_b)
 
         comparables = self.flatten_pairs()
+        # comparables.append(divider_a_cmp)
+        # comparables.append(divider_b_cmp)
+
         comparables.append(divider_a_cmp)
         comparables.append(divider_b_cmp)
         comparables.sort()
 
         self.comparables = comparables
 
-        divider_a_index = comparables.index(divider_a_cmp) + 1
-        divider_b_index = comparables.index(divider_b_cmp) + 1
+        divider_a_index = self.comparables.index(divider_a_cmp) + 1
+        divider_b_index = self.comparables.index(divider_b_cmp) + 1
 
         self.key_a_index = divider_a_index
         self.key_b_index = divider_b_index
