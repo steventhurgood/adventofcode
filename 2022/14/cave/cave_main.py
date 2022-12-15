@@ -12,7 +12,8 @@ default_filename = os.path.join(os.path.dirname(__file__), 'data', 'data.txt')
 @click.option('--verbose', type=bool, default=False)
 @click.option('--print_every', type=int, default=1)
 @click.option('--has_floor', type=bool, default=True)
-def simulate_cave(input: str, verbose: bool, print_every: int, has_floor: bool):
+def simulate_cave(input: str, verbose: bool, print_every: int,
+                  has_floor: bool):
     cave: Cave = CaveBuilder(input).build(has_floor)
 
     while cave.simulate():

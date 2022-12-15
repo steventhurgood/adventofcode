@@ -117,7 +117,10 @@ class Comparable:
     """Comparable represents a recursively comparable tree of numbers.
     """
     @classmethod
-    def compile_comparable_pairs(cls, input_filename: str) -> Tuple[List[Tuple[Comparable, Comparable]], ComparablePairCompiler]:
+    def compile_comparable_pairs(cls,
+                                 input_filename: str) -> Tuple[
+            List[Tuple[Comparable, Comparable]],
+            ComparablePairCompiler]:
         """Create a list of pairs of comparables, from a file"""
 
         data = antlr4.FileStream(input_filename)
@@ -131,13 +134,14 @@ class Comparable:
 
     @classmethod
     def build_comparable(cls, number_or_list: List[Any]) -> Comparable:
-        """build_comparable takes a list of nested lists of numbers and returns a Comparable
+        """build_comparable creates a Comparable from nested lists.
 
         Args:
             number_or_list (List[Any]): A list of numbers and lists.
 
         Returns:
-            Comparable: an object that can be used to compare the ordering of twi Comparable objects
+            Comparable: an object that can be used to compare the ordering of
+                two Comparable objects
         """
         if isinstance(number_or_list, int):
             return ComparableNumber(number=number_or_list)
@@ -159,7 +163,8 @@ class Comparable:
                 return new_left < other
 
             raise Exception(
-                f'Incompatible types: {self}({type(self)}) and {other}({type(other)})')
+                f'Incompatible types: {self}({type(self)}) '
+                'and {other}({type(other)})')
 
         if isinstance(self, ComparableList):
             if isinstance(other, ComparableList):
@@ -181,15 +186,17 @@ class Comparable:
                 return self < new_right
 
             raise Exception(
-                f'Incompatible types: {self}({type(self)}) and {other}({type(other)})')
+                f'Incompatible types: {self}({type(self)})'
+                ' and {other}({type(other)})')
 
         raise Exception(
-            f'Incompatible types: {self}({type(self)}) and {other}({type(other)})')
+            f'Incompatible types: {self}({type(self)})'
+            ' and {other}({type(other)})')
 
 
 @ dataclass
 class ComparableNumber(Comparable):
-    """ComparableNumber represents a number in the recursively comparable tree"""
+    """ComparableNumber represents a number in the comparable tree"""
     number: int
 
     def __str__(self) -> str:

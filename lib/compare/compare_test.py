@@ -7,6 +7,11 @@ from typing import Any, List
 
 from lib.compare import Comparable
 
+import logging
+logging.basicConfig()
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
 test_filename = os.path.join(os.path.dirname(
     __file__), 'test_data', 'test_data.txt')
 test_filename2 = os.path.join(os.path.dirname(
@@ -110,6 +115,39 @@ class TestCompare(unittest.TestCase):
         _, compiler = Comparable.compile_comparable_pairs(test_filename)
         decoder_key = compiler.find_decoder_key()
         self.assertEqual(decoder_key, 140)
+
+    def test_sort(self):
+        test = [
+            [[6, 3, [3]], [9, 9, 3]],
+            [[6, 9, 9], [2, [10, 6]]],
+            [[6]],
+            [[6], [0]],
+            [[6, [9]], [7, 2]],
+            [[[6], 0], [10, [5, [6], 0, [8, 4], 0]]],
+            [[2]],
+            [[[6], 5, [[6, 9, 9, 0, 10], 8], 6, [[3, 6], 7]]],
+        ]
+        test_cmp = [Comparable.build_comparable(i) for i in test]
+        want = [
+            [[2]],
+            [[6]],
+            [[6], [0]],
+            [[6, 3, [3]], [9, 9, 3]],
+            [[6, [9]], [7, 2]],
+            [[6, 9, 9], [2, [10, 6]]],
+            [[[6], 0], [10, [5, [6], 0, [8, 4], 0]]],
+            [[[6], 5, [[6, 9, 9, 0, 10], 8], 6, [[3, 6], 7]]],
+        ]
+        want_cmp = [Comparable.build_comparable(i) for i in want]
+        for i in want_cmp:
+            logger.info(str(i))
+
+        got = test_cmp.sort()
+
+        for i in got:
+            logger.info(str(i))
+
+        self.assertEqual(got, want_cmp)
 
     def test_comparables(self):
         _, compiler = Comparable.compile_comparable_pairs(test_filename2)
