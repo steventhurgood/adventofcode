@@ -1,7 +1,7 @@
 
 import unittest
 import os
-from lib.sensors import Sensors, Vector, Ranges, Range
+from lib.sensors import Sensors, Sensor, Vector, Ranges, Range
 
 from dataclasses import dataclass
 
@@ -31,6 +31,17 @@ class TestSensors(unittest.TestCase):
 
         self.assertEqual(beacon, Vector(14, 11))
         self.assertEqual(beacon.tuning_frequency(), 56000011)
+
+    def test_range_at_row(self):
+        sensor = Sensor.create(Vector(8, 7), Vector(2, 10))
+
+        self.assertEqual(sensor.range_at_row(7), Range(-1, 17))
+        self.assertEqual(sensor.range_at_row(4), Range(2, 14))
+        self.assertEqual(sensor.range_at_row(10), Range(2, 14))
+        self.assertEqual(sensor.range_at_row(16), Range(8, 8))
+        self.assertEqual(sensor.range_at_row(-2), Range(8, 8))
+        self.assertTrue(sensor.range_at_row(17).empty)
+        self.assertTrue(sensor.range_at_row(-3).empty)
 
     def test_ranges(self):
         tests: List[RangeTestCase] = [

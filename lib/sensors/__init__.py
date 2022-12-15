@@ -1,1 +1,1 @@
-from .sensors import Sensors, Vector, Range, Ranges
+from .sensors import Sensors, Sensor, Vector, Range, Ranges
