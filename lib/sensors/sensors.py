@@ -33,6 +33,8 @@ class Ranges:
     ranges: List[Range] = field(default_factory=list)
 
     def add(self, range: Range):
+        # todo - keep a sorted list of the left and right bits of
+        # each range, so I can merge them by walking and counting.
         if range.empty:
             return
 
